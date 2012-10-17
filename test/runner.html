@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+
+<meta charset="utf-8">
+
+<title>Plug.UPnP test runner</title>
+
+<link rel="stylesheet" href="../vendor/mocha/mocha.css" type="text/css" />
+
+<script src="../vendor/mocha/mocha.js"></script>
+<script src="./assert.js"></script>
+
+<script>
+  mocha.setup({ui: 'bdd', globals: ['stats', 'report']});
+</script>
+
+<script src="./nsdTestHarness.js"></script>
+<script src="../lib/plug.upnp.js"></script>
+<script src="./plug.upnp.test.js"></script>
+
+<div id="mocha"></div>
+
+<script>
+  mocha.run();
+</script>
