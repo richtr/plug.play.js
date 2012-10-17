@@ -1,0 +1,428 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Plug.Play.js by richtr</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Plug.Play.js</h1>
+        <p>A Network Service Messaging framework for use on top of the W3C Network Service Discovery specification</p>
+
+        <p class="view"><a href="https://github.com/richtr/plug.play.js">View the Project on GitHub <small>richtr/plug.play.js</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/richtr/plug.play.js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/richtr/plug.play.js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/richtr/plug.play.js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h3>Setup</h3>
+
+<p>This API requires a web browser that supports <a href="http://www.w3.org/TR/2012/WD-discovery-api-20121004/#dom-navigator-getnetworkservices"><code>navigator.getNetworkServices</code></a>.</p>
+
+<h4>Download this library</h4>
+
+<p>You can download a <a href="https://github.com/richtr/plug.play.js/zipball/master">ZIP</a> or <a href="https://github.com/richtr/plug.play.js/tarball/master">TAR.GZ</a> file containing all the Plug.Play library code or you can clone this repo via Git as follows:</p>
+
+<pre><code>git clone git://github.com/richtr/plug.play.js.git
+</code></pre>
+
+<p>To get started, a UPnP service demo (<a href="https://github.com/richtr/plug.play.js/blob/master/example.html">example.html</a>) is available and a <a href="https://github.com/richtr/plug.play.js/blob/master/test">test suite</a> is also included for checking the validity of the API.</p>
+
+<h3>Work flow</h3>
+
+<p>Plug.Play is an API to make working with UPnP Services simple and easy.</p>
+
+<p>The basic work flow for using this API is as follows:</p>
+
+<ol>
+<li>Obtain one or more <a href="http://www.w3.org/TR/2012/WD-discovery-api-20121004/#networkservice"><code>NetworkService</code></a> objects via <a href="http://www.w3.org/TR/2012/WD-discovery-api-20121004/#dom-navigator-getnetworkservices"><code>navigator.getNetworkServices</code></a>.</li>
+<li>Create a new <code>Plug.UPnP</code> object for each <a href="http://www.w3.org/TR/2012/WD-discovery-api-20121004/#networkservice"><code>NetworkService</code></a> object returned.</li>
+<li>Invoke UPnP Service Actions via the <code>Plug.UPnP</code> object's <code>.action()</code> API method.</li>
+</ol><p>Each step above is explained in more detail below.</p>
+
+<h4>Step 1: Obtain <code>NetworkService</code> objects</h4>
+
+<p>If you are running this API in a supported browser, as discussed in the <a href="#setup">Setup</a> section above, you will be able to obtain a set of <a href="http://www.w3.org/TR/2012/WD-discovery-api-20121004/#networkservice"><code>NetworkService</code></a> objects as follows:</p>
+
+<pre><code>if(navigator.getNetworkServices) {
+  navigator.getNetworkServices(
+    'upnp:urn:schemas-upnp-org:service:RenderingControl:1',
+    successCallback
+  );
+}
+</code></pre>
+
+<p>The <code>successCallback</code> function takes one argument, a <a href="http://www.w3.org/TR/2012/WD-discovery-api-20121004/#networkservices"><code>NetworkServices</code></a> object that acts like an array of <a href="http://www.w3.org/TR/2012/WD-discovery-api-20121004/#networkservice"><code>NetworkService</code></a> objects. When services are found in the current network that match the requested service type(s) the web browser will trigger execution of this function.</p>
+
+<pre><code>function successCallback( servicesManager ) {
+  // Dump services to console
+  for( var i = 0; i &lt; servicesManager.length; i++ ) {
+    console.log( "Service w/ type [" +
+                    servicesManager[i].type  + "] available" );
+  }
+}
+</code></pre>
+
+<h4>Step 2: Create a new <code>Plug.UPnP</code> object</h4>
+
+<p>Once we have a <code>successCallback</code> function defined, we can create new <code>Plug.UPnP</code> objects.</p>
+
+<p>To create a new <code>Plug.UPnP</code> object we need pass in a single (UPnP-based) <a href="http://www.w3.org/TR/2012/WD-discovery-api-20121004/#networkservice"><code>NetworkService</code></a>
+object as the first argument.</p>
+
+<pre><code>var upnpService = new Plug.UPnP( servicesManager[i] );
+</code></pre>
+
+<p>Here's a full example, expanding and replacing the <code>successCallback</code> function we defined earler:</p>
+
+<pre><code>function successCallback( servicesManager ) {
+
+  // Create a new UPnP object for each service returned
+  var upnpServices = [];
+
+  for( var i = 0; i &lt; servicesManager.length; i++ ) {
+
+    upnpServices.push(
+      new Plug.UPnP( servicesManager[i] );
+    );
+
+    // doUPnPGetMute code provided in Step 3...
+    doUPnPGetMute( upnpServices[ upnpServices.length - 1 ] );
+
+  }
+
+}
+</code></pre>
+
+<p>You can optionally, include a second argument to this constructor to override the default <code>Plug.UPnP</code> options:</p>
+
+<pre><code>new Plug.UPnP( servicesManager[i], { debug: true } );
+</code></pre>
+
+<p>The current list of values that can be provided in the options argument are as follows:</p>
+
+<h6>debug</h6>
+
+<p><em>Boolean. Whether to spit out more debug messages to the console. Useful when debugging errors in your web app.</em></p>
+
+<h4>Step 3: Invoke UPnP actions and process UPnP responses</h4>
+
+<p>The Plug.Play API is built to work on top of <a href="https://github.com/tildeio/rsvp.js">rsvp.js</a> and therefore provides a  <a href="http://wiki.commonjs.org/wiki/Promises/A">Promises/A</a>-based interaction model. As part of the Promises model this API supports <a href="https://github.com/kriskowal/q#chaining">method chaining</a> and <a href="https://github.com/kriskowal/q#sequences">promise sequences</a>.</p>
+
+<p>Here is a simple example of querying the mute state of a UPnP RenderingControl:1 service on a created <code>Plug.UPnP</code> object called <code>upnpService</code>:</p>
+
+<pre><code>function doUPnPGetMute( upnpService ) {
+
+  upnpService.action('GetMute', {
+    InstanceId: 0,
+    Channel: 'Master'
+  })
+  .then(function( response ) {
+
+    console.log("Service is reporting MUTE=[" +
+      (response.data.CurrentMute == "1" ? 'on' : 'off' +
+        "]");
+
+  })
+  .then( null, function( error ) { // All errors will propagate here
+
+    console.log( error.description );
+
+  });
+
+}
+</code></pre>
+
+<p>The Plug.Play library also comes with some convenience classes for particular service types. The demo provided above can also be written against the well-defined <a href="https://github.com/richtr/plug.play.js/tree/master/lib/RenderingControl">UPnPRenderingControl API</a> also included in this repository. More service-specific wrappers will be added to this repository soon.</p>
+
+<h3>Advanced Usage</h3>
+
+<h5>Type Checking &amp; Conversion</h5>
+
+<p>You can enforce type checking and type conversion controls in this API according to the data types defined for UPnP in the <a href="http://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf">UPnP Device Architecture specification</a>.</p>
+
+<p>The following code is equivalent to the doUPnPGetMute() function defined above but this time we enforce the variable types and constrain inputs to a series of allowed value types for each input variable:</p>
+
+<pre><code>function doUPnPGetMute( upnpService ) {
+
+  upnpService.action('GetMute', {
+    InstanceId: {
+      type: upnpService.types.ui4, // or just write 'ui4'
+      value: 0
+    },
+    Channel: {
+      type: upnpService.types.string, // or just write 'string'
+      value: 'Master',
+      allowedValueList:
+        ['Master', 'LF', 'RF', 'CF', 'LFE', 'LS', 'RS',
+            'LFC', 'RFC', 'SD', 'SL', 'SR', 'T', 'B']
+    }
+  })
+  .then(function( response ) {
+
+    console.log("Service is reporting MUTE=[" +
+      (response.data.CurrentMute == "1" ? 'on' : 'off' +
+        "]");
+
+  })
+  .then( null, function( error ) {
+
+    console.log( "An error occurred: " + error.description );
+
+  });
+
+}
+</code></pre>
+
+<p>Furthermore, we can use the same structure to enforce variable type conversion on UPnP message response objects. This is useful in particular where we need or want to convert XML types to native JavaScript object types (such as booleans, numbers or dates).</p>
+
+<p>To do this we supply a more structured argument consisting of two parts: <code>request</code> parameters and <code>response</code> parameters. We assign our type checking/conversion rules as required in this structure:</p>
+
+<pre><code>function doUPnPGetMute( upnpService ) {
+
+  upnpService.action('GetMute', {
+    request: {
+      InstanceId: {
+        type: upnpService.types.ui4,
+        value: 0
+      },
+      Channel: {
+        type: upnpService.types.string,
+        value: 'Master',
+        allowedValueList:
+          ['Master', 'LF', 'RF', 'CF', 'LFE', 'LS', 'RS',
+              'LFC', 'RFC', 'SD', 'SL', 'SR', 'T', 'B']
+      }
+    },
+    response: {
+      CurrentMute: {
+        type: upnpService.types.boolean,
+        value: false // default response value if
+                     // none is provided (optional)
+      }
+    }
+  })
+  .then( function( response ) {
+
+    // Note: we no longer need to check for '== "1"' below because
+    // response.data.CurrentMute is now a native JS boolean as we
+    // defined in our &lt;actionParameters&gt; above:
+
+    console.log("Service is reporting MUTE=[" +
+      (response.data.CurrentMute ? 'on' : 'off') +
+        "]");
+
+  }, function( error ) { // Handle any errors
+
+    console.log( "An error occurred: " + error.description );
+
+  });
+
+}
+</code></pre>
+
+<p>Plug.Play API calls can be <a href="https://github.com/kriskowal/q#chaining">chained</a> as follows:</p>
+
+<pre><code>function doUPnPGetThenSetThenGetMute( upnpService ) {
+
+  upnpService.action('GetMute', {
+    request: {
+      InstanceId: 0,
+      Channel: 'Master'
+    },
+    response: {
+      CurrentMute: {
+        type: upnpService.types.boolean
+      }
+    }
+  })
+  .then( function( response ) {
+
+    console.log("Service is reporting MUTE=[" +
+      (response.data.CurrentMute ? 'on' : 'off') +
+        "]");
+
+    return upnpService.action('SetMute', {
+      request: {
+        InstanceId: 0,
+        Channel: 'Master',
+        DesiredMute: response.data.CurrentMute ? 0 : 1
+      }
+    });
+
+  })
+  .then( function( response ) {
+
+    return upnpService.action('GetMute', {
+      request: {
+        InstanceId: 0,
+        Channel: 'Master'
+      },
+      response: {
+        CurrentMute: {
+          type: upnpService.types.boolean
+        }
+      }
+    })
+
+  })
+  .then( function( response ) {
+
+    console.log("Service is reporting MUTE=[" +
+      (response.data.CurrentMute ? 'on' : 'off') +
+        "]");
+
+  })
+  .then( null, function( error ) { // Handle any errors
+
+    console.log( "An error occurred: " + error.description );
+
+  });
+
+}
+</code></pre>
+
+<h5>UPnP data types</h5>
+
+<p>The list of valid UPnP data types are as follows:</p>
+
+<h6>Plug.UPnP.prototype.types.i1</h6>
+
+<p><em>1 Byte int</em></p>
+
+<h6>Plug.UPnP.prototype.types.i2</h6>
+
+<p><em>2 Byte int</em></p>
+
+<h6>Plug.UPnP.prototype.types.i4</h6>
+
+<p><em>4 Byte int</em></p>
+
+<h6>Plug.UPnP.prototype.types.ui1</h6>
+
+<p><em>Unsigned 1 Byte int</em></p>
+
+<h6>Plug.UPnP.prototype.types.ui2</h6>
+
+<p><em>Unsigned 2 Byte int</em></p>
+
+<h6>Plug.UPnP.prototype.types.ui4</h6>
+
+<p><em>Unsigned 4 Byte int</em></p>
+
+<h6>Plug.UPnP.prototype.types.int</h6>
+
+<p><em>Fixed point, integer number that may have leading sign</em></p>
+
+<h6>Plug.UPnP.prototype.types.r4</h6>
+
+<p><em>4 Byte float</em></p>
+
+<h6>Plug.UPnP.prototype.types.r8</h6>
+
+<p><em>8 Byte float</em></p>
+
+<h6>Plug.UPnP.prototype.types.number</h6>
+
+<p><em>Same as <code>Plug.UPnP.prototype.types.r8</code></em></p>
+
+<h6>Plug.UPnP.prototype.types.fixed_14_4</h6>
+
+<p><em>Same as <code>Plug.UPnP.prototype.types.r8</code> but no more than 14 digits to the left of the decimal point and no more than 4 to the right</em></p>
+
+<h6>Plug.UPnP.prototype.types.float</h6>
+
+<p><em>Floating point number (same as <code>Plug.UPnP.prototype.types.r8</code>)</em></p>
+
+<h6>Plug.UPnP.prototype.types.char</h6>
+
+<p><em>Unicode string. One character long</em></p>
+
+<h6>Plug.UPnP.prototype.types.string</h6>
+
+<p><em>Unicode string. No limit on length</em></p>
+
+<h6>Plug.UPnP.prototype.types.date</h6>
+
+<p><em>Date without time data (accepts ISO-8601 strings or Date objects and returns ECMA <code>Date</code> objects)</em></p>
+
+<h6>Plug.UPnP.prototype.types.dateTime</h6>
+
+<p><em>Date with optional time but no time zone (accepts ISO-8601 strings or Date objects and returns ECMA <code>Date</code> objects)</em></p>
+
+<h6>Plug.UPnP.prototype.types.dateTime_tz</h6>
+
+<p><em>Date with optional time and optional time zone (accepts ISO-8601 strings or Date objects and returns ECMA <code>Date</code> objects)</em></p>
+
+<h6>Plug.UPnP.prototype.types.time</h6>
+
+<p><em>Time with no date and no time zone (accepts ISO-8601 strings or Date objects and returns ECMA <code>Date</code> objects)</em></p>
+
+<h6>Plug.UPnP.prototype.types.time_tz</h6>
+
+<p><em>Time with optional time zone but no date (accepts ISO-8601 strings or Date objects and returns ECMA <code>Date</code> objects)</em></p>
+
+<h6>Plug.UPnP.prototype.types.boolean</h6>
+
+<p><em><code>true</code> or <code>false</code> (accepts <code>'true'</code>, <code>'false'</code>, <code>'yes'</code>, <code>'y'</code>, <code>'no'</code>, <code>'n'</code> and returns ECMA <code>Boolean</code> objects)</em></p>
+
+<h6>Plug.UPnP.prototype.types.bin_base64</h6>
+
+<p><em>MIME-style Base64 encoded binary blob</em></p>
+
+<h6>Plug.UPnP.prototype.types.bin_hex</h6>
+
+<p><em>Hexadecimal digits representing octets</em></p>
+
+<h6>Plug.UPnP.prototype.types.uri</h6>
+
+<p><em>Universal Resource Identifier</em></p>
+
+<h6>Plug.UPnP.prototype.types.uuid</h6>
+
+<p><em>Universally Unique Identifier</em></p>
+
+<h3>Feedback</h3>
+
+<p>If you find any bugs or issues please report them on the <a href="https://github.com/richtr/plug.play.js/issues">Plug.Play Issue Tracker</a>.</p>
+
+<p>If you would like to contribute to this project please consider <a href="https://github.com/richtr/plug.play.js/fork_select">forking this repo</a> and then creating a new <a href="https://github.com/richtr/plug.play.js/pulls">Pull Request</a> back to the main code base.</p>
+
+<h3>License</h3>
+
+<p>Copyright © 2012 Opera Software ASA</p>
+
+<p>See the <a href="https://github.com/richtr/plug.play.js/blob/master/LICENSE">LICENSE</a> file.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/richtr">richtr</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-2663988-10");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
