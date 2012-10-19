@@ -45,7 +45,7 @@ function onServices( services ) {
     var service = services[ i ];
     service._index = i;
 
-    var upnpService = new Plug.UPnP( service, { debug: true } );
+    var upnpService = new Plug.UPnP( service, { debug: false } );
 
     // Let's mute the provided service (w/o API parameter type checking)
     upnpService.action('GetMute', {
@@ -65,11 +65,11 @@ function onServices( services ) {
       // response.data.CurrentMute is now a native JS boolean as we
       // defined in our <actionParameters> above:
 
-      debugLog("Service[" + service._index + "] is reporting MUTE=[" +
+      debugLog("Service[" + this.svc._index + "] is reporting MUTE=[" +
         (response.data.CurrentMute ? 'on' : 'off') +
           "]");
 
-      return upnpService.action('SetMute', {
+      return this.action('SetMute', {
         request: {
           InstanceId: 0,
           Channel: 'Master',
@@ -80,7 +80,7 @@ function onServices( services ) {
     })
     .then( function( response ) {
 
-      return upnpService.action('GetMute', {
+      return this.action('GetMute', {
         request: {
           InstanceId: 0,
           Channel: 'Master'
@@ -99,7 +99,7 @@ function onServices( services ) {
       // response.data.CurrentMute is now a native JS boolean as we
       // defined in our <actionParameters> above:
 
-      debugLog("Service[" + service._index + "] is reporting MUTE=[" +
+      debugLog("Service[" + this.svc._index + "] is reporting MUTE=[" +
         (response.data.CurrentMute ? 'on' : 'off') +
           "]");
 
@@ -119,8 +119,7 @@ if( navigator.getNetworkServices ) {
   debugLog('Searching for UPnP services in the current network...');
 
   navigator.getNetworkServices(
-    ['upnp:urn:schemas-upnp-org:service:RenderingControl:1',
-    'upnp:urn:schemas-upnp-org:service:ContentDirectory:1'],
+    ['upnp:urn:schemas-upnp-org:service:RenderingControl:1'],
     onServices,
     function(e) {
       debugLog( 'An error occurred obtaining UPnP Services [CODE: ' + error.code + ']');
