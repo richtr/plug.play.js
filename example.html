@@ -119,7 +119,8 @@ if( navigator.getNetworkServices ) {
   debugLog('Searching for UPnP services in the current network...');
 
   navigator.getNetworkServices(
-    'upnp:urn:schemas-upnp-org:service:RenderingControl:1',
+    ['upnp:urn:schemas-upnp-org:service:RenderingControl:1',
+    'upnp:urn:schemas-upnp-org:service:ContentDirectory:1'],
     onServices,
     function(e) {
       debugLog( 'An error occurred obtaining UPnP Services [CODE: ' + error.code + ']');
