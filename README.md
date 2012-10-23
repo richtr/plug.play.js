@@ -7,6 +7,8 @@ A JavaScript API for communicating with Universal Plug and Play (UPnP) Services 
 
 This API requires a web browser that supports [<code>navigator.getNetworkServices</code>](http://www.w3.org/TR/2012/WD-discovery-api-20121004/#dom-navigator-getnetworkservices).
 
+Opera [released a Labs build](http://dev.opera.com/articles/view/network-service-discovery-api-support-in-opera/) that provides support for this API. You can read more and download the browser builds at the [Dev.Opera blog](http://dev.opera.com/articles/view/network-service-discovery-api-support-in-opera/).
+
 #### Download this library
 
 You can download a [ZIP](https://github.com/richtr/plug.play.js/zipball/master) or [TAR.GZ](https://github.com/richtr/plug.play.js/tarball/master) file containing all the Plug.Play library code or you can clone this repo via Git as follows:
