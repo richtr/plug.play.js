@@ -104,7 +104,7 @@ Here is a simple example of querying the mute state of a UPnP RenderingControl:1
       .then(function( response ) {
 
         console.log("Service is reporting MUTE=[" +
-          (response.data.CurrentMute) == "1" ? 'on' : 'off' +
+          (response.data.CurrentMute == "1" ? 'on' : 'off') +
             "]");
 
       })
