@@ -268,32 +268,19 @@ Plug.Play API calls can be [chained](https://github.com/kriskowal/q#chaining) as
 
 The <code>Plug.UPnP</code> has the following attributes and methods: 
 
-_object_ <code>options</code>
-
-_object_ <code>svc</code>
-
-_object_ <code>action(upnpAction, upnpParameters, callback)</code>
-
-_string_ <code>svcType</code>
-
-_string_ <code>svcUrl</code>
-
-_string_ <code>requestTemplate</code>
-
-_object_ <code>types</code>
-
-_string_ <code>createRequest(upnpServiceType, upnpActionName, parameters)</code>
-
-_object_ <code>sendRequest(upnpServiceType, upnpActionName, upnpEndpointURL, upnpRequestXML, onUPnPResponse)</code>
-
-_object_ <code>handleResponse(upnpActionName, upnpResponseXML, parameters, onUPnPResolved)</code>
-
-_object_ <code>formatParameter(parameter)</code>
-
-_object_ <code>formatParameters(parameters)</code>
-
-_string_ <code>checkAllowedValues(val, allowedValueList)</code>
-
+_object_ <code>options</code><br>
+_object_ <code>svc</code><br>
+_object_ <code>action(upnpAction, upnpParameters, callback)</code><br>
+_string_ <code>svcType</code><br>
+_string_ <code>svcUrl</code><br>
+_string_ <code>requestTemplate</code><br>
+_object_ <code>types</code><br>
+_string_ <code>createRequest(upnpServiceType, upnpActionName, parameters)</code><br>
+_object_ <code>sendRequest(upnpServiceType, upnpActionName, upnpEndpointURL, upnpRequestXML, onUPnPResponse)</code><br>
+_object_ <code>handleResponse(upnpActionName, upnpResponseXML, parameters, onUPnPResolved)</code><br>
+_object_ <code>formatParameter(parameter)</code><br>
+_object_ <code>formatParameters(parameters)</code><br>
+_string_ <code>checkAllowedValues(val, allowedValueList)</code><br>
 _void_ <code>debugLog (msg, level)</code>
 
 ##### UPnP data types
