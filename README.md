@@ -262,6 +262,27 @@ Plug.Play API calls can be [chained](https://github.com/kriskowal/q#chaining) as
 
     }
 
+### Reference
+
+##### <code>Plug.UPnP</code> properties
+
+The <code>Plug.UPnP</code> has the following attributes and methods: 
+
+_object_ <code>options</code><br>
+_object_ <code>svc</code><br>
+_object_ <code>action(upnpAction, upnpParameters, callback)</code><br>
+_string_ <code>svcType</code><br>
+_string_ <code>svcUrl</code><br>
+_string_ <code>requestTemplate</code><br>
+_object_ <code>types</code><br>
+_string_ <code>createRequest(upnpServiceType, upnpActionName, parameters)</code><br>
+_object_ <code>sendRequest(upnpServiceType, upnpActionName, upnpEndpointURL, upnpRequestXML, onUPnPResponse)</code><br>
+_object_ <code>handleResponse(upnpActionName, upnpResponseXML, parameters, onUPnPResolved)</code><br>
+_object_ <code>formatParameter(parameter)</code><br>
+_object_ <code>formatParameters(parameters)</code><br>
+_string_ <code>checkAllowedValues(val, allowedValueList)</code><br>
+_void_ <code>debugLog (msg, level)</code>
+
 ##### UPnP data types
 
 The list of valid UPnP data types are as follows:
