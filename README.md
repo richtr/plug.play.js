@@ -54,7 +54,7 @@ The <code>successCallback</code> function takes one argument, a [<code>NetworkSe
 
 Once we have a <code>successCallback</code> function defined, we can create new <code>Plug.UPnP</code> objects.
 
-To create a new <code>Plug.UPnP</code> object we need pass in a single (UPnP-based) [<code>NetworkService</code>](http://www.w3.org/TR/2012/WD-discovery-api-20121004/#networkservice)
+To create a new <code>Plug.UPnP</code> object we to need pass in a single (UPnP-based) [<code>NetworkService</code>](http://www.w3.org/TR/2012/WD-discovery-api-20121004/#networkservice)
 object as the first argument.
 
     var upnpService = new Plug.UPnP( servicesManager[i] );
@@ -69,7 +69,7 @@ Here's a full example, expanding and replacing the <code>successCallback</code> 
       for( var i = 0; i < servicesManager.length; i++ ) {
 
         upnpServices.push(
-          new Plug.UPnP( servicesManager[i] );
+          new Plug.UPnP( servicesManager[i] )
         );
 
         // doUPnPGetMute code provided in Step 3...
@@ -81,7 +81,7 @@ Here's a full example, expanding and replacing the <code>successCallback</code> 
 
 You can optionally, include a second argument to this constructor to override the default <code>Plug.UPnP</code> options:
 
-    new Plug.UPnP( servicesManager[i], { debug: true } );
+    new Plug.UPnP( servicesManager[i], { debug: true } )
 
 The current list of values that can be provided in the options argument are as follows:
 
@@ -104,7 +104,7 @@ Here is a simple example of querying the mute state of a UPnP RenderingControl:1
       .then(function( response ) {
 
         console.log("Service is reporting MUTE=[" +
-          (response.data.CurrentMute == "1" ? 'on' : 'off' +
+          (response.data.CurrentMute == "1" ? 'on' : 'off') +
             "]");
 
       })
