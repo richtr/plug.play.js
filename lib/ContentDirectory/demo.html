@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<script type="text/javascript" src="../plug.upnp.js"></script>
+<script type="text/javascript" src="./plug.upnp_contentdirectory.js"></script>
+
+<style>
+
+#debug {
+  padding: 0.5em;
+  border: thin inset;
+  font: small monospace;
+  color: black;
+}
+
+</style>
+
+<h1>Plug.UPnP_ContentDirectory Example: Getting a Media Server's UpdateId</h1>
+
+<div id="debug"></div>
+
+<script>
+(function() {
+    'use strict';
+    
+    var debugEl = document.getElementById('debug');
+
+    function debugLog(msg) {
+        var logEl = document.createElement('div');
+        logEl.textContent = msg;
+        debugEl.appendChild( logEl );
+    }
+
+    function onServices(services) {
+        
+        debugLog( services.length + ' service' +
+        ( services.length !== 1 ? 's' : '' ) +
+        ' found in the current network' );
+
+        if( services.length === 0 ) {
+            return;
+        }
+
+        for (var i = 0; i < services.length; i++) {
+            var service = services[ i ];
+            service._index = i;
+
+            var mediaServer = new Plug.UPnP_ContentDirectory( service, { debug: false } );
+            
+            mediaServer.getSystemUpdateId().then(function(response) {
+                
+                if (response && response.data) {
+                    debugLog("Service[" + service._index + "] is reporting UpdateId=[" + response.data.Id + "]");
+                } else {
+                    debugLog("Service[" + service._index + "] is reporting no response");
+                }
+                
+            }).then( null, function( error ) { // Handle any errors
+
+                debugLog( "An error occurred: " + error.description );
+
+            });
+
+        }
+    }
+
+    
+    if( navigator.getNetworkServices ) {
+        debugLog('Searching for UPnP services in the current network...');
+        navigator.getNetworkServices(
+            'upnp:urn:schemas-upnp-org:service:ContentDirectory:1',
+            onServices,
+            function(e) {
+                debugLog( 'An error occurred obtaining UPnP Services [CODE: ' + error.code + ']');
+        });
+    } else {
+        debugLog('navigator.getNetworkServices API is not supported in this browser');
+    }
+
+})();
+
+</script>
